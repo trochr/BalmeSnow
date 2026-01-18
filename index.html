@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BalmeSnow — Webcam Viewer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="siteHeader">
+    <h1>BalmeSnow — Webcam Viewer</h1>
+  </div>
+
+  <!-- Help button (top-right) -->
+  <button id="helpBtn" class="help-button" aria-haspopup="dialog" aria-controls="helpDialog" title="Help">?</button>
+
+  <main>
+
+    <div class="controls">
+      <label for="manifestUrl">Manifest URL:</label>
+      <input id="manifestUrl" type="url" placeholder="https://archives.webcam-hd.com/YYYY/MM/DD/camera.json">
+      <button id="loadBtn">Load</button>
+    </div>
+
+    <div id="viewer">
+      <button id="prev" aria-label="Previous">◀</button>
+      <div id="imageWrap">
+        <img id="photo" alt="webcam image" src=""/>
+        <div id="magnifier" aria-hidden="true"></div>
+        <canvas id="magnifierTicks" aria-hidden="true"></canvas>
+        <div id="zoomLabel" aria-hidden="true"></div>
+        <div id="meta"></div>
+      </div>
+      <button id="next" aria-label="Next">▶</button>
+    </div>
+
+    
+  </main>
+
+  <!-- Help dialog: friendly, non-technical instructions for normal users -->
+  <div id="helpDialog" class="help-dialog-overlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle" hidden>
+    <div class="help-dialog" role="document">
+      <div class="help-header">
+        <h2 id="helpTitle">Quick Help</h2>
+        <button id="helpCloseBtn" class="help-close" aria-label="Close help">✕</button>
+      </div>
+      <div class="help-body">
+        <ul>
+          <li><strong>Magnifier:</strong> Use your mouse wheel (scroll) to zoom in a circular magnifier. Scroll up to zoom in, scroll down to zoom out. When zoom is 1× the magnifier hides.</li>
+          <li><strong>Next / Previous:</strong> Click the ◀ and ▶ buttons or use the left/right arrow keys on your keyboard to move one image back or forward. The magnifier stays where you placed it while you move between images — handy for spotting small changes in snow level.</li>
+          <li><strong>Jump by time:</strong> Hold <strong>Shift</strong> and press the left or right arrow keys to jump to the nearest morning/noon or similar natural break (handy to skip through time). To jump by whole days instead, hold <strong>Shift</strong> + <strong>Control</strong> while using the arrow keys.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+:root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+body{margin:0;background:#f6f8fa;color:#111}
+
+/* Fixed small header to save vertical space */
+#siteHeader{position:fixed;top:6px;left:12px;z-index:20}
+
+main {
+	max-width: 1430px;
+	margin: 8px auto;
+	padding: 20px 16px 16px 16px;
+}
+#viewer{display:flex;align-items:center;gap:12px}
+#viewer button{background:#fff;border:1px solid #ccc;padding:8px 12px;border-radius:6px;cursor:pointer;min-width:44px;text-align:center}
+#imageWrap{flex:1;display:flex;flex-direction:column;align-items:center}
+#photo{max-width:100%;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+#meta{margin-top:8px;color:#555}
+.controls{display:none}
+.help{color:#666;font-size:0.9rem}
+
+/* Title styling */
+h1{font-size:1.05rem;margin:0;padding:0}
+
+
+#viewer button#next{margin-left:8px}
+
+/* Shake animation for next arrow to gently indicate new images
+   Frequency: 1.5Hz (1.5 cycles per second). Use ~667ms per cycle.
+   Vertical displacement: 10% of the button's height. */
+@keyframes arrowShake {
+  0% { transform: translateY(0); }
+  25% { transform: translateY(-10%); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(10%); }
+  100% { transform: translateY(0); }
+}
+
+/* Applied to the next button when new images are available */
+.next-animate {
+  animation-name: arrowShake;
+  animation-duration: 667ms; /* one cycle ≈0.667s -> 1.5 cycles/sec */
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Magnifier (circular lens) */
+#magnifier{
+	position:absolute;
+	width:160px;
+	height:160px;
+	border-radius:50%;
+	box-shadow:0 4px 12px rgba(0,0,0,0.25);
+	border:3px solid rgba(255,255,255,0.8);
+	pointer-events:none;
+	display:none;
+	z-index:50;
+	background-repeat:no-repeat;
+	background-position:center center;
+}
+
+/* Canvas overlay for subtle graduation ticks around the magnifier */
+#magnifierTicks{
+  position:absolute;
+  width:160px;
+  height:160px;
+  pointer-events:none;
+  display:none;
+  z-index:55; /* above magnifier border */
+}
+
+#imageWrap{position:relative}
+
+/* Overlay used for double-buffered mega image swap. The mega source
+	 can be much taller; display it at half height to match the main
+	 `#photo` visual without changing its intrinsic src. Keep width at
+	 100% and let the browser preserve aspect ratio via `height:auto`.
+*/
+#photoMega{
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:auto;
+	transform-origin: top left;
+	/* No transform here; JS will size the overlay to match the displayed `#photo`. */
+	transform: none;
+	pointer-events:none;
+}
+
+/* New images indicator removed: replaced with subtle animation on next button */
+
+/* Zoom label shown briefly above magnifier */
+#zoomLabel{
+	position:absolute;
+	transform:translateX(-50%);
+	padding:6px 8px;
+	background:rgba(0,0,0,0.75);
+	color:white;
+	font-size:0.9rem;
+	border-radius:6px;
+	display:none;
+	z-index:60;
+}
+
+/* Help button: small circled question mark in top-right */
+.help-button{
+	position:fixed;
+	top:10px;
+	right:12px;
+	width:36px;
+	height:36px;
+	border-radius:50%;
+	background:white;
+	color:#111;
+	border:1px solid rgba(0,0,0,0.08);
+	box-shadow:0 2px 6px rgba(0,0,0,0.08);
+	font-weight:600;
+	font-size:1.05rem;
+	line-height:1;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	cursor:pointer;
+	z-index:100;
+}
+.help-button:focus{outline:3px solid rgba(0,0,0,0.12)}
+
+/* Modal overlay and dialog */
+.help-dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;z-index:200}
+.help-dialog{background:white;color:#111;max-width:520px;width:92%;border-radius:10px;padding:16px;box-shadow:0 8px 40px rgba(0,0,0,0.35)}
+.help-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.help-header h2{margin:0;font-size:1.1rem}
+.help-close{background:transparent;border:none;font-size:1.1rem;cursor:pointer}
+.help-body{color:#333;font-size:0.98rem;line-height:1.4}
+.help-body ul{padding-left:18px}
+.help-body li{margin-bottom:8px}
+
+/* When hidden, ensure overlay is not shown */
+.help-dialog-overlay[hidden]{display:none}
