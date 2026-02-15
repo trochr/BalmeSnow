@@ -35,7 +35,7 @@
 	}
 }
 
-body{margin:0;background:var(--bg-main);color:var(--text-primary)}
+body{margin:0;background:var(--bg-main);color:var(--text-primary);touch-action:manipulation}
 
 /* Fixed small header to save vertical space */
 #siteHeader{position:fixed;top:6px;left:12px;z-index:20}
