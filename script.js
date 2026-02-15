@@ -103,8 +103,9 @@ function showImage(i) {
     weekday = names[dt.getDay()];
   }
   meta.textContent = `${weekday ? weekday + ' ' : ''}${label} — ${displayHour}`;
-  // show/hide navigation at bounds
-  if (prevBtn) prevBtn.style.visibility = (index > 0) ? 'visible' : 'hidden';
+  // Always show prev: at index 0 the click handler fetches the previous day,
+  // so the button must stay reachable (mobile Safari has no keyboard fallback).
+  if (prevBtn) prevBtn.style.visibility = 'visible';
   if (nextBtn) nextBtn.style.visibility = (index < images.length - 1) ? 'visible' : 'hidden';
   const token = ++probeToken;
   const baseForImage = img.manifestUrl || manifestInput.value;
