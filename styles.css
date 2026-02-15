@@ -228,7 +228,8 @@ main{
 	}
 
 	#viewer{
-		flex-direction:column;
+		flex-direction:row;
+		flex-wrap:wrap;
 		gap:8px;
 	}
 
@@ -248,9 +249,6 @@ main{
 	}
 
 	/* Arrange prev/next in a row below the image */
-	#viewer{
-		flex-wrap:wrap;
-	}
 	#viewer button#prev{
 		order:2;
 		flex:1;
