@@ -173,6 +173,28 @@ h1{font-size:1.05rem;margin:0;padding:0}
 /* When hidden, ensure overlay is not shown */
 .help-dialog-overlay[hidden]{display:none}
 
+/* Portrait image: move arrows below image */
+#viewer.portrait{
+	flex-wrap:wrap;
+}
+#viewer.portrait #imageWrap{
+	width:100%;
+	order:1;
+}
+#viewer.portrait button{
+	order:2;
+}
+#viewer.portrait button#prev{
+	order:2;
+	flex:1;
+	margin-right:4px;
+}
+#viewer.portrait button#next{
+	order:3;
+	flex:1;
+	margin-left:4px;
+}
+
 /* ===== iPhone / Mobile responsive styles ===== */
 
 /* Prevent iOS rubber-band overscroll and pull-to-refresh */

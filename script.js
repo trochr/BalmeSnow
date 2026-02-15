@@ -5,6 +5,7 @@ const displayImg = document.getElementById('photo') || document.getElementById('
 const meta = document.getElementById('meta') || document.getElementById('meta');
 const prevBtn = document.getElementById('prev');
 const nextBtn = document.getElementById('next');
+const viewer = document.getElementById('viewer');
 // Track the images length the user has been notified about / has seen.
 // This prevents repeated nagging for the same new images until truly newer
 // images arrive.
@@ -919,6 +920,11 @@ if (photo && magnifier) {
 // Refresh magnifier content when the image finishes loading (e.g., after navigation)
 if (photo) {
   photo.addEventListener('load', () => {
+    // Toggle portrait class when image is taller than wide
+    if (viewer) {
+      const isPortrait = photo.naturalHeight > photo.naturalWidth;
+      viewer.classList.toggle('portrait', isPortrait);
+    }
     if (lastPointer && magnifierActive) {
       // refresh magnifier when image finishes loading
       updateMagnifier(lastPointer);
