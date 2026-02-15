@@ -939,3 +939,128 @@ function hideMagnifier() {
     if (ctx) ctx.clearRect(0,0,magnifierTicks.width || 0, magnifierTicks.height || 0);
   }
 }
+
+// ===== Touch gesture support for iPhone / mobile =====
+(function setupTouchGestures() {
+  if (!photo) return;
+  const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+  if (!isTouchDevice) return;
+
+  // --- Swipe to navigate ---
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+  let touchMoved = false;
+  const SWIPE_THRESHOLD = 50;   // min px for a swipe
+  const SWIPE_MAX_Y = 80;      // max vertical drift to still count as horizontal swipe
+  const SWIPE_MAX_TIME = 400;   // ms
+
+  // --- Pinch to zoom (magnifier) ---
+  let pinchStartDist = 0;
+  let pinchStartZoom = 1.5;
+  let isPinching = false;
+
+  function getTouchDistance(t1, t2) {
+    const dx = t1.clientX - t2.clientX;
+    const dy = t1.clientY - t2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function getTouchCenter(t1, t2) {
+    return {
+      clientX: (t1.clientX + t2.clientX) / 2,
+      clientY: (t1.clientY + t2.clientY) / 2
+    };
+  }
+
+  photo.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+      touchMoved = false;
+    }
+    if (e.touches.length === 2) {
+      // Start pinch
+      isPinching = true;
+      pinchStartDist = getTouchDistance(e.touches[0], e.touches[1]);
+      pinchStartZoom = magnifierZoom;
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  photo.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2 && isPinching) {
+      e.preventDefault();
+      const dist = getTouchDistance(e.touches[0], e.touches[1]);
+      const scale = dist / pinchStartDist;
+      magnifierZoom = Math.max(1.0, Math.min(8, pinchStartZoom * scale));
+
+      // Activate and position magnifier at pinch center
+      const center = getTouchCenter(e.touches[0], e.touches[1]);
+      if (magnifierZoom > 1.0) {
+        if (!magnifierActive) magnifierActive = true;
+        updateMagnifier(center);
+        if (magnifierTicks) drawGraduation(magnifierZoom);
+      } else {
+        hideMagnifier();
+      }
+      return;
+    }
+
+    if (e.touches.length === 1) {
+      const dx = e.touches[0].clientX - touchStartX;
+      const dy = e.touches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) touchMoved = true;
+    }
+  }, { passive: false });
+
+  photo.addEventListener('touchend', (e) => {
+    if (isPinching) {
+      isPinching = false;
+      // If zoom dropped to 1, hide magnifier
+      if (magnifierZoom <= 1.0) hideMagnifier();
+      return;
+    }
+
+    if (e.changedTouches.length !== 1) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    const elapsed = Date.now() - touchStartTime;
+
+    // Only handle swipe if it's a clear horizontal gesture
+    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_MAX_Y && elapsed < SWIPE_MAX_TIME) {
+      markUserAction();
+      boundaryCursor = null;
+      if (dx < 0) {
+        // Swipe left -> next image
+        if (pendingImages && Array.isArray(pendingImages)) {
+          images = pendingImages;
+          pendingImages = null;
+          lastNotifiedLen = images.length;
+          stopNextAnimation();
+          showImage(images.length - 1);
+        } else if (index < images.length - 1) {
+          showImage(index + 1);
+        }
+      } else {
+        // Swipe right -> previous image
+        if (index > 0) {
+          showImage(index - 1);
+        } else {
+          fetchAndPrependPreviousDay().then((added) => {
+            if (added && added > 0) {
+              markUserAction();
+              showImage(added - 1);
+            }
+          });
+        }
+      }
+    }
+  }, { passive: true });
+
+  // Cancel pinch if touches go away unexpectedly
+  photo.addEventListener('touchcancel', () => {
+    isPinching = false;
+  }, { passive: true });
+})();

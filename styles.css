@@ -172,3 +172,153 @@ h1{font-size:1.05rem;margin:0;padding:0}
 
 /* When hidden, ensure overlay is not shown */
 .help-dialog-overlay[hidden]{display:none}
+
+/* ===== iPhone / Mobile responsive styles ===== */
+
+/* Prevent iOS rubber-band overscroll and pull-to-refresh */
+html{overscroll-behavior:none;-webkit-overflow-scrolling:touch}
+
+/* Safe area insets for notched iPhones */
+main{
+	padding-left:max(16px, env(safe-area-inset-left));
+	padding-right:max(16px, env(safe-area-inset-right));
+	padding-bottom:max(16px, env(safe-area-inset-bottom));
+}
+
+/* Touch-specific: disable text selection on interactive elements */
+#viewer button,
+.help-button{
+	-webkit-user-select:none;
+	user-select:none;
+	-webkit-tap-highlight-color:transparent;
+}
+
+/* Active state for touch feedback */
+#viewer button:active{
+	background:var(--border);
+	transform:scale(0.95);
+	transition:transform 0.1s, background 0.1s;
+}
+.help-button:active{
+	transform:scale(0.9);
+	transition:transform 0.1s;
+}
+
+/* Prevent image drag on touch (interferes with swipe) */
+#photo{
+	-webkit-user-drag:none;
+	user-select:none;
+	-webkit-user-select:none;
+	touch-action:pan-y pinch-zoom;
+}
+
+/* Mobile layout: stack navigation below image */
+@media (max-width: 600px) {
+	#siteHeader{
+		position:static;
+		padding:8px 12px 0;
+		text-align:center;
+	}
+	h1{font-size:0.95rem}
+
+	main{
+		margin:0 auto;
+		padding:8px max(8px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-right));
+	}
+
+	#viewer{
+		flex-direction:column;
+		gap:8px;
+	}
+
+	#imageWrap{
+		width:100%;
+		order:1;
+	}
+
+	/* Navigation buttons side-by-side below the image */
+	#viewer button{
+		order:2;
+		font-size:1.2rem;
+		padding:12px 24px;
+		min-height:48px;
+		min-width:48px;
+		border-radius:8px;
+	}
+
+	/* Arrange prev/next in a row below the image */
+	#viewer{
+		flex-wrap:wrap;
+	}
+	#viewer button#prev{
+		order:2;
+		flex:1;
+		margin-right:4px;
+	}
+	#viewer button#next{
+		order:3;
+		flex:1;
+		margin-left:4px;
+	}
+
+	#photo{border-radius:4px}
+	#meta{font-size:0.9rem;text-align:center}
+
+	/* Help button sizing for touch */
+	.help-button{
+		width:44px;
+		height:44px;
+		font-size:1.15rem;
+		top:8px;
+		right:max(8px, env(safe-area-inset-right));
+	}
+
+	/* Help dialog takes more width on mobile */
+	.help-dialog{
+		width:96%;
+		max-width:none;
+		max-height:85vh;
+		overflow-y:auto;
+		-webkit-overflow-scrolling:touch;
+	}
+
+	/* Magnifier: slightly smaller on mobile */
+	#magnifier{width:120px;height:120px}
+	#magnifierTicks{width:120px;height:120px}
+
+	/* Zoom label readable on mobile */
+	#zoomLabel{font-size:0.85rem;padding:4px 6px}
+}
+
+/* Very small screens (iPhone SE, etc.) */
+@media (max-width: 375px) {
+	h1{font-size:0.85rem}
+	#viewer button{padding:10px 16px;font-size:1.1rem}
+	#meta{font-size:0.8rem}
+	#magnifier{width:100px;height:100px}
+	#magnifierTicks{width:100px;height:100px}
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+	#siteHeader{position:fixed;top:4px;left:max(8px, env(safe-area-inset-left));z-index:20}
+	h1{font-size:0.85rem}
+
+	main{
+		margin:0 auto;
+		padding:4px max(8px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+	}
+
+	/* In landscape, keep prev/next beside image to save vertical space */
+	#viewer{
+		flex-direction:row;
+		flex-wrap:nowrap;
+		gap:6px;
+	}
+	#viewer button#prev{order:0;flex:initial;margin-right:0}
+	#imageWrap{order:1}
+	#viewer button#next{order:2;flex:initial;margin-left:0}
+
+	#photo{border-radius:4px}
+	#meta{font-size:0.8rem;margin-top:2px}
+}
