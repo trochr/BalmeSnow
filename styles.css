@@ -185,12 +185,13 @@ main{
 	padding-bottom:max(16px, env(safe-area-inset-bottom));
 }
 
-/* Touch-specific: disable text selection on interactive elements */
+/* Touch-specific: disable text selection and double-tap zoom on interactive elements */
 #viewer button,
 .help-button{
 	-webkit-user-select:none;
 	user-select:none;
 	-webkit-tap-highlight-color:transparent;
+	touch-action:manipulation;
 }
 
 /* Active state for touch feedback */
