@@ -25,6 +25,25 @@ function computeManifestUrlForDate(d = new Date()) {
   return `https://archives.webcam-hd.com/${yyyy}/${mm}/${dd}/la-clusaz_balme.json`;
 }
 
+// Optional ?date=YYYY-MM-DD (or ?d=YYYY-MM-DD) in the page URL selects a
+// specific archive day, e.g. /BalmeSnow/?date=2026-04-20.
+function manifestUrlFromQuery() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('date') || params.get('d');
+    if (!raw) return null;
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw.trim());
+    if (!m) return null;
+    const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    if (Number.isNaN(d.getTime())) return null;
+    // reject impossible dates that JS would silently roll over (e.g. 2026-02-31)
+    if (d.getFullYear() !== Number(m[1]) || d.getMonth() !== Number(m[2]) - 1 || d.getDate() !== Number(m[3])) return null;
+    return computeManifestUrlForDate(d);
+  } catch (e) {
+    return null;
+  }
+}
+
 async function fetchManifest(url) {
   const res = await fetch(url, {cache: 'no-store'});
   if (!res.ok) throw new Error('Failed to load manifest');
@@ -640,10 +659,11 @@ async function fetchAndAppendNextDay() {
 
 // Auto-load on open
 window.addEventListener('load', () => {
-  // if the manifest input is empty, populate with today's manifest URL
+  // if the manifest input is empty, populate with the date from the page URL
+  // (?date=YYYY-MM-DD) or fall back to today's manifest URL
   try {
     if (manifestInput && !manifestInput.value) {
-      manifestInput.value = computeManifestUrlForDate();
+      manifestInput.value = manifestUrlFromQuery() || computeManifestUrlForDate();
     }
   } catch (e) {
     // ignore

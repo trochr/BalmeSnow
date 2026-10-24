@@ -19,8 +19,9 @@ A webcam viewer for browsing time-lapse images from the La Clusaz ski resort web
 
 1. Open `index.html` in a web browser (or serve via local HTTP server: `python3 -m http.server 8000`)
 2. The viewer loads the latest available images automatically
-3. Use keyboard controls or on-screen buttons to navigate
-4. Click the help icon (?) in the top-right corner for more information
+3. To browse a specific archive day, add a date to the page URL: `https://trochr.github.io/BalmeSnow/?date=2026-04-20` (format `YYYY-MM-DD`). This is useful while the Balme webcam is offline: archives are available from 2025-11-12 to 2026-04-27.
+4. Use keyboard controls or on-screen buttons to navigate
+5. Click the help icon (?) in the top-right corner for more information
 
 ## Data Source
 
