@@ -237,26 +237,46 @@ main{
 
 /* Mobile layout: stack navigation below image */
 @media (max-width: 600px) {
+	/* Fill the viewport so the image + arrows block can be centred
+	   vertically instead of hugging the top of the screen. */
+	body{
+		min-height:100vh;
+		min-height:100dvh;
+		display:flex;
+		flex-direction:column;
+	}
+
 	#siteHeader{
 		position:static;
+		flex:0 0 auto;
 		padding:8px 12px 0;
 		text-align:center;
 	}
 	h1{font-size:0.95rem}
 
 	main{
-		margin:0 auto;
+		flex:1;
+		display:flex;
+		flex-direction:column;
+		margin:0;
 		padding:8px max(8px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-right));
 	}
 
 	#viewer{
+		/* auto vertical margins centre the block, and collapse to 0 (no
+		   clipping) when the content is taller than the screen. */
+		margin-top:auto;
+		margin-bottom:auto;
 		flex-direction:row;
 		flex-wrap:wrap;
 		gap:8px;
 	}
 
 	#imageWrap{
-		width:100%;
+		/* Use flex-basis (not width) so the image claims a full row and the
+		   arrows wrap below. `width:100%` is overridden by the base `flex:1`
+		   (flex-basis:0%), so it never forced the row break. */
+		flex:0 0 100%;
 		order:1;
 	}
 
